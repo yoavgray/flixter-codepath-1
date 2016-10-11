@@ -1,10 +1,8 @@
 package com.example.yoavgray.flixter.activities;
 
-import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,6 +26,7 @@ import cz.msebera.android.httpclient.Header;
 public class MovieActivity extends AppCompatActivity {
     @BindView(R.id.list_view_movies) ListView moviesListView;
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
+
     private List<Movie> movies;
     private MoviesAdapter moviesAdapter;
     private AsyncHttpClient client;

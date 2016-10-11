@@ -1,9 +1,12 @@
 package com.example.yoavgray.flixter.activities;
 
+import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.yoavgray.flixter.models.Movie;
 import com.example.yoavgray.flixter.adapters.MoviesAdapter;
@@ -24,20 +27,39 @@ import cz.msebera.android.httpclient.Header;
 
 public class MovieActivity extends AppCompatActivity {
     @BindView(R.id.list_view_movies) ListView moviesListView;
+    @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
     private List<Movie> movies;
     private MoviesAdapter moviesAdapter;
+    private AsyncHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
         ButterKnife.bind(this);
+        client = new AsyncHttpClient();
 
 //        Movie movie1 = new Movie(null, null, null, null, "kaki1", );
         movies = new ArrayList<>();
         moviesAdapter = new MoviesAdapter(this, R.layout.movie_list_item, movies);
         moviesListView.setAdapter(moviesAdapter);
-        AsyncHttpClient client = new AsyncHttpClient();
+        updateMoviesList();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateMoviesList();
+            }
+        });
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+    }
+
+    private void updateMoviesList() {
         RequestParams params = new RequestParams();
         String url = "https://api.themoviedb.org/3/movie/now_playing";
         params.put("api_key","a07e22bc18f5cb106bfe4cc1f83ad8ed");
@@ -45,7 +67,8 @@ public class MovieActivity extends AppCompatActivity {
         client.get(url, params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DMovieActivity", "Failed to get Data!!!");
+                Toast.makeText(getBaseContext(),"Unable to fetch movies data, please check your connection",Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -56,6 +79,7 @@ public class MovieActivity extends AppCompatActivity {
                 movies.clear();
                 movies.addAll(results.getResults());
                 moviesAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }

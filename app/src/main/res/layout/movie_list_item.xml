@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@android:color/black">
 
     <ImageView
         android:id="@+id/image_view_movie_poster"
@@ -16,9 +15,9 @@
         android:textSize="30sp"
         android:textColor="@android:color/white"
         android:shadowColor="@android:color/black"
-        android:shadowDx="2"
-        android:shadowDy="1"
-        android:shadowRadius="2"
+        android:shadowDx="3"
+        android:shadowDy="2"
+        android:shadowRadius="3"
         android:layout_margin="6dp"
         android:layout_alignTop="@id/image_view_movie_poster"
         android:layout_centerHorizontal="true"/>
@@ -26,11 +25,12 @@
         android:id="@+id/text_view_movie_overview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/black"
+        android:background="@drawable/textview_background"
         android:textSize="16sp"
         android:padding="8dp"
         android:maxLines="4"
         android:ellipsize="end"
         android:layout_below="@id/image_view_movie_poster"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        />
 </RelativeLayout>

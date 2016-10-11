@@ -1,6 +1,9 @@
 package com.example.yoavgray.flixter.models;
 
-public class Movie {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Movie implements Parcelable {
     private String poster_path;
     private String overview;
     private String release_date;
@@ -73,5 +76,42 @@ public class Movie {
 
     public void setPopularity(Double popularity) {
         this.popularity = popularity;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(poster_path);
+        dest.writeString(overview);
+        dest.writeString(release_date);
+        dest.writeString(original_title);
+        dest.writeString(title);
+        dest.writeString(backdrop_path);
+        dest.writeDouble(popularity);
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR
+            = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    private Movie(Parcel in) {
+        poster_path     = in.readString();
+        overview        = in.readString();
+        release_date    = in.readString();
+        original_title  = in.readString();
+        title           = in.readString();
+        backdrop_path   = in.readString();
+        popularity      = in.readDouble();
     }
 }

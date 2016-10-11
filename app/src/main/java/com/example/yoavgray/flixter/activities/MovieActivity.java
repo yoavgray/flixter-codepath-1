@@ -1,8 +1,11 @@
 package com.example.yoavgray.flixter.activities;
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,7 +41,6 @@ public class MovieActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         client = new AsyncHttpClient();
 
-//        Movie movie1 = new Movie(null, null, null, null, "kaki1", );
         movies = new ArrayList<>();
         moviesAdapter = new MoviesAdapter(this, R.layout.movie_list_item, movies);
         moviesListView.setAdapter(moviesAdapter);
@@ -55,6 +57,15 @@ public class MovieActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        moviesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getBaseContext(), MovieDetailsActivity.class);
+                i.putExtra("MOVIE", movies.get(position));
+                startActivity(i);
+            }
+        });
 
     }
 

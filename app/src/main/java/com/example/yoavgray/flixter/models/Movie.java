@@ -14,14 +14,16 @@ public class Movie implements Parcelable {
     private String title;
     private String backdrop_path;
     private Double popularity;
+    private Double vote_average;
 
-    public Movie(String poster_path, String overview, String release_date, String title, String backdrop_path, Double popularity) {
+    public Movie(String poster_path, String overview, String release_date, String title, String backdrop_path, Double popularity, Double vote_average) {
         this.poster_path = poster_path;
         this.overview = overview;
         this.release_date = release_date;
         this.title = title;
         this.backdrop_path = backdrop_path;
         this.popularity = popularity;
+        this.vote_average = vote_average;
     }
 
     public String getPosterPath() {
@@ -48,6 +50,10 @@ public class Movie implements Parcelable {
         return popularity;
     }
 
+    public Double getVoteAverage() {
+        return vote_average;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -61,6 +67,7 @@ public class Movie implements Parcelable {
         dest.writeString(title);
         dest.writeString(backdrop_path);
         dest.writeDouble(popularity);
+        dest.writeDouble(vote_average);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR
@@ -81,5 +88,6 @@ public class Movie implements Parcelable {
         title           = in.readString();
         backdrop_path   = in.readString();
         popularity      = in.readDouble();
+        vote_average    = in.readDouble();
     }
 }

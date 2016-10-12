@@ -2,36 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@android:color/black"
+    android:paddingBottom="8dp"
+    >
 
     <ImageView
         android:id="@+id/image_view_movie"
-        android:layout_centerHorizontal="true"
-        android:layout_width="match_parent"
-        android:layout_height="250dp" />
+        android:layout_width="280dp"
+        android:layout_height="150dp" />
     <TextView
         android:id="@+id/text_view_movie_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textColor="@android:color/white"
-        android:shadowColor="@android:color/black"
-        android:shadowDx="5"
-        android:shadowDy="4"
-        android:shadowRadius="5"
-        android:layout_margin="@dimen/text_view_movie_title_margin"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/text_view_movie_title_margin"
         android:layout_alignTop="@id/image_view_movie"
-        android:layout_centerInParent="true"/>
+        android:layout_toEndOf="@id/image_view_movie"/>
     <TextView
         android:id="@+id/text_view_movie_overview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/textview_background"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:padding="8dp"
         android:maxLines="4"
         android:ellipsize="end"
-        android:layout_below="@id/image_view_movie"
+        android:layout_below="@id/text_view_movie_title"
+        android:layout_toEndOf="@id/image_view_movie"
         android:textColor="@android:color/white"
         />
 </RelativeLayout>

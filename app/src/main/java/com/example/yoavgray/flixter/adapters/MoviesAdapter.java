@@ -1,6 +1,7 @@
 package com.example.yoavgray.flixter.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,8 @@ import butterknife.ButterKnife;
 
 public class MoviesAdapter extends ArrayAdapter<Movie> {
     public static final String MOVIE_POSTER_URL_PREFIX = "https://image.tmdb.org/t/p/";
-    public static final String MOVIE_POSTER_SIZE_SMALL = "w342";
+    public static final String MOVIE_POSTER_SIZE = "w500";
+    public static final String MOVIE_BACKDROP_SIZE = "w780";
 
     Context context;
     int layoutResourceId;
@@ -44,6 +46,7 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         final MovieViewHolder holder;
+        String movieImageUrl = MOVIE_POSTER_URL_PREFIX;
 
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -55,19 +58,28 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         }
 
         final Movie movie = data.get(position);
+
         holder.titleTextView.setText(movie.getTitle());
         holder.overviewTextView.setText(movie.getOverview());
-        String moviePosterUrl = MOVIE_POSTER_URL_PREFIX + MOVIE_POSTER_SIZE_SMALL + movie.getPosterPath();
-        Picasso.with(context).load(moviePosterUrl).fit().centerCrop()
+
+        int orientation = context.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            movieImageUrl = movieImageUrl + MOVIE_POSTER_SIZE + movie.getPosterPath();
+        } else {
+            movieImageUrl = movieImageUrl + MOVIE_BACKDROP_SIZE + movie.getBackdropPath();
+        }
+
+        Picasso.with(context).load(movieImageUrl)
+                .fit().centerCrop()
                 .placeholder(R.drawable.progress_image)
-//                .error(R.drawable.user_placeholder_error)
-                .into(holder.posterImageView);
+                .into(holder.movieImageView);
+
         return row;
     }
 
     static class MovieViewHolder
     {
-        @BindView(R.id.image_view_movie_poster) ImageView posterImageView;
+        @BindView(R.id.image_view_movie) ImageView movieImageView;
         @BindView(R.id.text_view_movie_title) TextView titleTextView;
         @BindView(R.id.text_view_movie_overview) TextView overviewTextView;
 

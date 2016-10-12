@@ -64,6 +64,7 @@ public class MovieActivity extends AppCompatActivity {
                 Intent i = new Intent(getBaseContext(), MovieDetailsActivity.class);
                 i.putExtra("MOVIE", movies.get(position));
                 startActivity(i);
+                overridePendingTransition( R.anim.transition_fade_in, 0);
             }
         });
 

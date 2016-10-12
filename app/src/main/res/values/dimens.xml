@@ -2,5 +2,15 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="text_view_movie_title_margin">6dp</dimen>
+
+    <dimen name="text_view_movie_title_margin">8dp</dimen>
+    <dimen name="text_view_movie_overview_margin">8dp</dimen>
+
+    <dimen name="image_view_movie_height_portrait">250dp</dimen>
+    <dimen name="image_view_movie_width_landscape">260dp</dimen>
+    <dimen name="image_view_movie_height_landscape">150dp</dimen>
+
+    <dimen name="text_view_movie_title_size">22sp</dimen>
+    <dimen name="text_view_movie_overview_size">16sp</dimen>
+
 </resources>

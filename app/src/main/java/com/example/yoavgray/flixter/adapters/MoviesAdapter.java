@@ -21,9 +21,6 @@ import butterknife.ButterKnife;
 
 
 public class MoviesAdapter extends ArrayAdapter<Movie> {
-    public static final String MOVIE_POSTER_URL_PREFIX = "https://image.tmdb.org/t/p/";
-    public static final String MOVIE_POSTER_SIZE = "w500";
-    public static final String MOVIE_BACKDROP_SIZE = "w780";
 
     Context context;
     int layoutResourceId;
@@ -46,7 +43,6 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         final MovieViewHolder holder;
-        String movieImageUrl = MOVIE_POSTER_URL_PREFIX;
 
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -58,15 +54,16 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         }
 
         final Movie movie = data.get(position);
+        String movieImageUrl;
 
         holder.titleTextView.setText(movie.getTitle());
         holder.overviewTextView.setText(movie.getOverview());
 
         int orientation = context.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            movieImageUrl = movieImageUrl + MOVIE_POSTER_SIZE + movie.getPosterPath();
+            movieImageUrl = movie.getPosterPath();
         } else {
-            movieImageUrl = movieImageUrl + MOVIE_BACKDROP_SIZE + movie.getBackdropPath();
+            movieImageUrl = movie.getBackdropPath();
         }
 
         Picasso.with(context).load(movieImageUrl)

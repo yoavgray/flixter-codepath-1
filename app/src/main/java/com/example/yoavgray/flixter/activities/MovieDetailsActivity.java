@@ -33,5 +33,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .into(posterImageView);
         ratingBar.setNumStars(5);
         ratingBar.setRating((float)2.7);
+        // Slide in from right
+        overridePendingTransition(R.anim.transition_from_right, R.anim.transition_fade_out);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // Slide out to right
+        overridePendingTransition(R.anim.transition_fade_in, R.anim.transition_to_right);
     }
 }

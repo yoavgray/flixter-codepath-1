@@ -12,4 +12,6 @@
 
     <dimen name="text_view_movie_title_size">40sp</dimen>
     <dimen name="text_view_movie_overview_size">24sp</dimen>
+
+    <dimen name="image_view_play_size">100dp</dimen>
 </resources>

@@ -13,21 +13,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieDetailsActivity extends AppCompatActivity {
+    private static final String MOVIE_TAG = "movieExtra";
+
     @BindView(R.id.image_view_details_poster) ImageView posterImageView;
     @BindView(R.id.ratingBar) RatingBar ratingBar;
-
-    public static final String MOVIE_POSTER_URL_PREFIX = "https://image.tmdb.org/t/p/";
-    public static final String MOVIE_POSTER_SIZE_SMALL = "w342";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
-        Movie movie = getIntent().getParcelableExtra("MOVIE");
+        Movie movie = getIntent().getParcelableExtra(MOVIE_TAG);
         getSupportActionBar().hide();
-        String moviePosterUrl = MOVIE_POSTER_URL_PREFIX + MOVIE_POSTER_SIZE_SMALL + movie.getPosterPath();
-        Picasso.with(this).load(moviePosterUrl).fit().centerCrop()
+        String moviePosterUrl = movie.getPosterPath();
+        Picasso.with(this).load(moviePosterUrl).fit().centerInside()
                 .placeholder(R.drawable.progress_image)
 //                .error(R.drawable.user_placeholder_error)
                 .into(posterImageView);

@@ -27,6 +27,8 @@ import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class MovieActivity extends AppCompatActivity {
+    private static final String MOVIE_TAG = "movieExtra";
+
     @BindView(R.id.list_view_movies) ListView moviesListView;
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
 
@@ -62,7 +64,7 @@ public class MovieActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getBaseContext(), MovieDetailsActivity.class);
-                i.putExtra("MOVIE", movies.get(position));
+                i.putExtra(MOVIE_TAG, movies.get(position));
                 startActivity(i);
                 overridePendingTransition( R.anim.transition_fade_in, 0);
             }

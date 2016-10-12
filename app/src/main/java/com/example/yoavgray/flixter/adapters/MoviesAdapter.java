@@ -3,6 +3,7 @@ package com.example.yoavgray.flixter.adapters;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,9 @@ import butterknife.ButterKnife;
 
 
 public class MoviesAdapter extends ArrayAdapter<Movie> {
+    public static final int REGULAR_MOVIE_TYPE = 0;
+    public static final int POPULAR_MOVIE_TYPE = 1;
+    public static final int VIEW_TYPE_COUNT = POPULAR_MOVIE_TYPE + 1;
 
     Context context;
     int layoutResourceId;
@@ -38,6 +42,32 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         return data.get(position);
     }
 
+    // Returns the number of types of Views that will be created by getView(int, View, ViewGroup)
+    @Override
+    public int getViewTypeCount() {
+        return VIEW_TYPE_COUNT;
+    }
+
+    // Get the type of View that will be created by getView(int, View, ViewGroup)
+    // for the specified item.
+    @Override
+    public int getItemViewType(int position) {
+        Movie movie = data.get(position);
+        return movie.getVoteAverage() < 5 ? REGULAR_MOVIE_TYPE : POPULAR_MOVIE_TYPE;
+    }
+
+    // Given the item type, responsible for returning the correct inflated XML layout file
+    private View getInflatedLayoutForType(int type) {
+        switch (type) {
+            case REGULAR_MOVIE_TYPE:
+                return LayoutInflater.from(getContext()).inflate(R.layout.movie_list_item, null);
+            case POPULAR_MOVIE_TYPE:
+                return LayoutInflater.from(getContext()).inflate(R.layout.popular_movie_list_item, null);
+            default:
+                return LayoutInflater.from(getContext()).inflate(R.layout.movie_list_item, null);
+        }
+    }
+
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -45,50 +75,49 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         final MovieViewHolder holder;
 
         if (row == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            row = inflater.inflate(layoutResourceId, parent, false);
+            // Get the data item type for this position
+            int type = getItemViewType(position);
+            row = getInflatedLayoutForType(type);
             holder = new MovieViewHolder(row);
-            row.setTag(holder);
+            if (row != null) {
+                row.setTag(holder);
+            }
         } else {
             holder = (MovieViewHolder) row.getTag();
         }
 
         final Movie movie = data.get(position);
-        String movieImageUrl;
 
-        holder.titleTextView.setText(movie.getTitle());
-        holder.overviewTextView.setText(movie.getOverview());
+        if (holder.titleTextView != null) holder.titleTextView.setText(movie.getTitle());
+        if (holder.overviewTextView != null) holder.overviewTextView.setText(movie.getOverview());
 
         int orientation = context.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            movieImageUrl = movie.getPosterPath();
+        if (movie.getVoteAverage() < 5) {
+            Picasso.with(context)
+                    // Load poster image or backdrop according to votes on portrait orientation
+                    .load(orientation == Configuration.ORIENTATION_PORTRAIT ?
+                    movie.getPosterPath() : movie.getBackdropPath())
+                    .fit().centerCrop()
+                    .placeholder(R.drawable.progress_image)
+                    .into(holder.movieImageView);
         } else {
-            movieImageUrl = movie.getBackdropPath();
+            Picasso.with(context).load(movie.getBackdropPath())
+                    .fit().centerInside()
+                    .placeholder(R.drawable.progress_image)
+                    .into(holder.popularMovieImageView);
         }
-
-        Picasso.with(context).load(movieImageUrl)
-                .fit().centerCrop()
-                .placeholder(R.drawable.progress_image)
-                .into(holder.movieImageView);
 
         return row;
     }
 
     static class MovieViewHolder
     {
-        @BindView(R.id.image_view_movie) ImageView movieImageView;
-        @BindView(R.id.text_view_movie_title) TextView titleTextView;
-        @BindView(R.id.text_view_movie_overview) TextView overviewTextView;
+        @Nullable @BindView(R.id.image_view_movie) ImageView movieImageView;
+        @Nullable @BindView(R.id.text_view_movie_title) TextView titleTextView;
+        @Nullable @BindView(R.id.text_view_movie_overview) TextView overviewTextView;
+        @Nullable @BindView(R.id.image_view_popular_movie) ImageView popularMovieImageView;
 
         public MovieViewHolder(View view) {
-            ButterKnife.bind(this, view);
-        }
-    }
-
-    static class PopularMovieViewHolder
-    {
-
-        public PopularMovieViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
     }

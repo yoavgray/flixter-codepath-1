@@ -1,15 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<ImageView
-    android:id="@+id/image_view_details_poster"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
-    android:cropToPadding="true"/>
 
-    <RatingBar
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_imageview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratingBar" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        app:layout_widthPercent="50%"
+        app:layout_heightPercent="40%">
+
+        <ImageView
+            android:id="@+id/image_view_details_poster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:src="@drawable/play"
+            android:id="@+id/image_view_details_play"
+            android:layout_width="@dimen/image_view_play_size"
+            android:layout_height="@dimen/image_view_play_size"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_movie_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/relative_layout_imageview"
+        app:layout_widthPercent="50%"
+        app:layout_heightPercent="40%">
+
+        <TextView
+            android:id="@+id/text_view_details_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_view_movie_title_size"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            tools:text="Fight Club"/>
+
+        <TextView
+            android:id="@+id/text_view_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_view_rating"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/text_view_details_title"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratingBar"
+            android:theme="@style/RatingBar"
+            android:numStars="5"
+            style="?android:attr/ratingBarStyleSmall"
+            android:maxWidth="240dp"
+            android:layout_below="@id/text_view_details_title"
+            android:layout_toEndOf="@id/text_view_rating"/>
+
+        <TextView
+            android:id="@+id/text_view_popularity_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_view_rating"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/text_view_details_title"
+            android:layout_toEndOf="@id/ratingBar"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <TextView
+            android:id="@+id/text_view_details_overview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/text_view_popularity_number"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/text_view_details_release_date_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_view_release_date"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <TextView
+            android:id="@+id/text_view_details_release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/text_view_details_release_date_title"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        android:layout_below="@id/relative_layout_imageview">
+
+        <LinearLayout
+            android:id="@+id/linear_layout_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:orientation="vertical"
+            android:showDividers="beginning|middle"
+            android:divider="@drawable/movie_list_vertical_divider">
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.percent.PercentRelativeLayout>

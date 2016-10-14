@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.example.yoavgray.flixter.models.Movie;
 import com.example.yoavgray.flixter.adapters.MoviesAdapter;
 import com.example.yoavgray.flixter.R;
-import com.example.yoavgray.flixter.models.Results;
+import com.example.yoavgray.flixter.models.MovieResults;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -27,6 +27,8 @@ import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class MovieActivity extends AppCompatActivity {
+    public static final int REGULAR_MOVIE_TYPE = 0;
+    public static final int POPULAR_MOVIE_TYPE = 1;
     private static final String MOVIE_TAG = "movieExtra";
 
     @BindView(R.id.list_view_movies) ListView moviesListView;
@@ -64,6 +66,13 @@ public class MovieActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getBaseContext(), MovieDetailsActivity.class);
+                Movie thisMovie = movies.get(position);
+                boolean isPopular = thisMovie.getVoteAverage() >= 5;
+                if (isPopular) {
+                    i.putExtra("shouldPlay", true);
+                } else {
+                    i.putExtra("shouldPlay", false);
+                }
                 i.putExtra(MOVIE_TAG, movies.get(position));
                 startActivity(i);
                 overridePendingTransition( R.anim.transition_fade_in, 0);
@@ -88,9 +97,9 @@ public class MovieActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 Gson gson = new GsonBuilder().create();
                 // Define Response class to correspond to the JSON response returned
-                Results results = gson.fromJson(responseString, Results.class);
+                MovieResults movieResults = gson.fromJson(responseString, MovieResults.class);
                 movies.clear();
-                movies.addAll(results.getResults());
+                movies.addAll(movieResults.getResults());
                 moviesAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
             }

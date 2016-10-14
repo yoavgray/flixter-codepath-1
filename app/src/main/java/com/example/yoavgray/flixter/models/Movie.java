@@ -8,6 +8,7 @@ public class Movie implements Parcelable {
     public static final String MOVIE_POSTER_SIZE = "w500";
     public static final String MOVIE_BACKDROP_SIZE = "w780";
 
+    private Integer id;
     private String poster_path;
     private String overview;
     private String release_date;
@@ -16,14 +17,19 @@ public class Movie implements Parcelable {
     private Double popularity;
     private Double vote_average;
 
-    public Movie(String poster_path, String overview, String release_date, String title, String backdrop_path, Double popularity, Double vote_average) {
-        this.poster_path = poster_path;
-        this.overview = overview;
-        this.release_date = release_date;
-        this.title = title;
-        this.backdrop_path = backdrop_path;
-        this.popularity = popularity;
-        this.vote_average = vote_average;
+    public Movie(Integer id, String poster_path, String overview, String release_date, String title, String backdrop_path, Double popularity, Double vote_average) {
+        this.id             = id;
+        this.poster_path    = poster_path;
+        this.overview       = overview;
+        this.release_date   = release_date;
+        this.title          = title;
+        this.backdrop_path  = backdrop_path;
+        this.popularity     = popularity;
+        this.vote_average   = vote_average;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getPosterPath() {
@@ -61,6 +67,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(poster_path);
         dest.writeString(overview);
         dest.writeString(release_date);
@@ -82,6 +89,7 @@ public class Movie implements Parcelable {
     };
 
     private Movie(Parcel in) {
+        id              = in.readInt();
         poster_path     = in.readString();
         overview        = in.readString();
         release_date    = in.readString();

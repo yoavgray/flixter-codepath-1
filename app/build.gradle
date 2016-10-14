@@ -3,7 +3,7 @@ apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "com.example.yoavgray.flicks"
         minSdkVersion 19
@@ -39,6 +39,7 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.7'
+    compile "com.android.support:percent:24.2.1"
 
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'

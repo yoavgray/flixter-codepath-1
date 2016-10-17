@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.yoavgray.flixter.R;
 import com.example.yoavgray.flixter.models.Movie;
+import com.example.yoavgray.flixter.models.MovieResults;
 import com.example.yoavgray.flixter.models.Review;
 import com.example.yoavgray.flixter.models.ReviewResults;
 import com.example.yoavgray.flixter.models.TrailerResult;
@@ -25,18 +26,26 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     private static final String MOVIE_TAG = "movieExtra";
     private static final String API_KEY = "a07e22bc18f5cb106bfe4cc1f83ad8ed";
     private static final String TRAILER_KEY_TAG = "trailerKey";
     private static final String SHOULD_PLAY_TAG = "shouldPlay";
-    private AsyncHttpClient client;
+    private OkHttpClient client;
     private String trailerKey;
     private boolean shouldPlay;
 
@@ -63,7 +72,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if (startingIntent != null) {
             shouldPlay = startingIntent.getBooleanExtra(SHOULD_PLAY_TAG, false);
         }
-        client = new AsyncHttpClient();
+        client = new OkHttpClient();
         Movie movie = getIntent().getParcelableExtra(MOVIE_TAG);
         getSupportActionBar().hide();
 
@@ -93,60 +102,89 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void getTrailer(Integer id) {
-        RequestParams params = new RequestParams();
-        String url = "https://api.themoviedb.org/3/movie/" + id.toString() + "/videos?";
-        params.put("language", "en");
-        params.put("api_key", API_KEY);
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.themoviedb.org/3/movie/" + id.toString() + "/videos").newBuilder();
+        urlBuilder.addQueryParameter("api_key", API_KEY);
+        urlBuilder.addQueryParameter("language", "en");
+        String url = urlBuilder.build().toString();
 
-        client.get(url, params, new TextHttpResponseHandler() {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Toast.makeText(getBaseContext(), movieTrailerErrorString, Toast.LENGTH_SHORT).show();
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getBaseContext(), movieTrailerErrorString, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Gson gson = new GsonBuilder().create();
-                // Define Response class to correspond to the JSON response returned
-                TrailerResult trailerResults = gson.fromJson(responseString, TrailerResult.class);
-                trailerKey = (trailerResults.getResults())[0].getKey();
-                if (shouldPlay) {
-                    trailerPlay();
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    Gson gson = new GsonBuilder().create();
+                    // Define Response class to correspond to the JSON response returned
+                    TrailerResult trailerResults = gson.fromJson(response.body().string(), TrailerResult.class);
+                    trailerKey = (trailerResults.getResults())[0].getKey();
+                    if (shouldPlay) {
+                        trailerPlay();
+                    }
                 }
             }
         });
     }
 
     private void getReviews(Integer id) {
-        RequestParams params = new RequestParams();
-        String url = "https://api.themoviedb.org/3/movie/" + id.toString() + "/reviews?";
-        params.put("language","en");
-        params.put("api_key", API_KEY);
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.themoviedb.org/3/movie/" + id.toString() + "/reviews").newBuilder();
+        urlBuilder.addQueryParameter("api_key", API_KEY);
+        urlBuilder.addQueryParameter("language", "en");
+        String url = urlBuilder.build().toString();
 
-        client.get(url, params, new TextHttpResponseHandler() {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
                 Toast.makeText(getBaseContext(),reviewsErrorString,Toast.LENGTH_SHORT).show();
-                reviewsProgressBar.setVisibility(View.INVISIBLE);
+                MovieDetailsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        reviewsProgressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Gson gson = new GsonBuilder().create();
-                // Define Response class to correspond to the JSON response returned
-                ReviewResults movieResults = gson.fromJson(responseString, ReviewResults.class);
-                Review[] reviews = movieResults.getResults();
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    Gson gson = new GsonBuilder().create();
+                    // Define Response class to correspond to the JSON response returned
+                    ReviewResults movieResults = gson.fromJson(response.body().string(), ReviewResults.class);
+                    // Declared final so could be read inside the below inner class
+                    final Review[] reviews = movieResults.getResults();
 
-                reviewsProgressBar.setVisibility(View.GONE);
-                if (reviews.length == 0) {
-                    noReviewsTextView.setVisibility(View.VISIBLE);
-                }
+                    MovieDetailsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            reviewsProgressBar.setVisibility(View.GONE);
+                            if (reviews.length == 0) {
+                                noReviewsTextView.setVisibility(View.VISIBLE);
+                            }
 
-                // Adding views dynamically
-                for (Review review : reviews) {
-                    ReviewView reviewView = new ReviewView(getBaseContext());
-                    reviewView.setReview(review);
-                    reviewsLayout.addView(reviewView);
+                            // Adding views dynamically
+                            for (Review review : reviews) {
+                                ReviewView reviewView = new ReviewView(getBaseContext());
+                                reviewView.setReview(review);
+                                reviewsLayout.addView(reviewView);
+                            }
+                        }
+                    });
                 }
             }
         });

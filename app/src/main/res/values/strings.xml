@@ -5,4 +5,5 @@
     <string name="no_reviews">No reviews to show</string>
     <string name="unable_to_fetch_trailer">Unable to fetch movie trailer, please check your connection</string>
     <string name="unable_to_fetch_reviews">Unable to fetch reviews, please check your connection</string>
+    <string name="unable_to_fetch_movie_data">Unable to fetch movies data, please check your connection</string>
 </resources>

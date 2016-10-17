@@ -10,9 +10,10 @@
     <dimen name="image_view_movie_width_landscape">260dp</dimen>
     <dimen name="image_view_movie_height_landscape">150dp</dimen>
 
-    <dimen name="text_view_movie_title_size">22sp</dimen>
+    <dimen name="text_view_movie_title_size">20sp</dimen>
     <dimen name="text_view_movie_overview_size">16sp</dimen>
 
     <dimen name="image_view_play_size">60dp</dimen>
+    <dimen name="small_font_size">12sp</dimen>
 
 </resources>

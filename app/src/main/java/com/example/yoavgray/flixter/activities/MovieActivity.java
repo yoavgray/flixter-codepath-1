@@ -19,30 +19,40 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MovieActivity extends AppCompatActivity {
     private static final String MOVIE_TAG = "movieExtra";
     private static final String SHOULD_PLAY_TAG = "shouldPlay";
+    private static final String API_KEY_TAG = "a07e22bc18f5cb106bfe4cc1f83ad8ed";
 
     @BindView(R.id.list_view_movies) ListView moviesListView;
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
+    @BindString(R.string.unable_to_fetch_movie_data) String movieDataErrorString;
 
     private List<Movie> movies;
     private MoviesAdapter moviesAdapter;
-    private AsyncHttpClient client;
+    private OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
         ButterKnife.bind(this);
-        client = new AsyncHttpClient();
+        client = new OkHttpClient();
 
         movies = new ArrayList<>();
         moviesAdapter = new MoviesAdapter(this, R.layout.movie_list_item, movies);
@@ -81,26 +91,42 @@ public class MovieActivity extends AppCompatActivity {
     }
 
     private void updateMoviesList() {
-        RequestParams params = new RequestParams();
-        String url = "https://api.themoviedb.org/3/movie/now_playing";
-        params.put("api_key","a07e22bc18f5cb106bfe4cc1f83ad8ed");
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.themoviedb.org/3/movie/now_playing").newBuilder();
+        urlBuilder.addQueryParameter("api_key", API_KEY_TAG);
+        String url = urlBuilder.build().toString();
 
-        client.get(url, params, new TextHttpResponseHandler() {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Toast.makeText(getBaseContext(),"Unable to fetch movies data, please check your connection",Toast.LENGTH_SHORT).show();
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getBaseContext(), movieDataErrorString, Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Gson gson = new GsonBuilder().create();
-                // Define Response class to correspond to the JSON response returned
-                MovieResults movieResults = gson.fromJson(responseString, MovieResults.class);
-                movies.clear();
-                movies.addAll(movieResults.getResults());
-                moviesAdapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    Gson gson = new GsonBuilder().create();
+                    // Define Response class to correspond to the JSON response returned
+                    MovieResults movieResults = gson.fromJson(response.body().string(), MovieResults.class);
+                    movies.clear();
+                    movies.addAll(movieResults.getResults());
+
+                    // Run view-related code back on the main thread
+                    MovieActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            moviesAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
             }
         });
     }

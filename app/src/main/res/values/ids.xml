@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="unable_to_fetch_trailer" type="id">Unable to fetch movie trailer, please check your
+        connection
+    </item>
+</resources>

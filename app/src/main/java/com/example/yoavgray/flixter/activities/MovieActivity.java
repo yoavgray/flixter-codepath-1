@@ -27,9 +27,8 @@ import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class MovieActivity extends AppCompatActivity {
-    public static final int REGULAR_MOVIE_TYPE = 0;
-    public static final int POPULAR_MOVIE_TYPE = 1;
     private static final String MOVIE_TAG = "movieExtra";
+    private static final String SHOULD_PLAY_TAG = "shouldPlay";
 
     @BindView(R.id.list_view_movies) ListView moviesListView;
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
@@ -69,9 +68,9 @@ public class MovieActivity extends AppCompatActivity {
                 Movie thisMovie = movies.get(position);
                 boolean isPopular = thisMovie.getVoteAverage() >= 5;
                 if (isPopular) {
-                    i.putExtra("shouldPlay", true);
+                    i.putExtra(SHOULD_PLAY_TAG, true);
                 } else {
-                    i.putExtra("shouldPlay", false);
+                    i.putExtra(SHOULD_PLAY_TAG, false);
                 }
                 i.putExtra(MOVIE_TAG, movies.get(position));
                 startActivity(i);

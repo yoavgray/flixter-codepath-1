@@ -1,11 +1,12 @@
 package com.example.yoavgray.flixter.widgets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.yoavgray.flixter.R;
 import com.example.yoavgray.flixter.models.Review;
@@ -57,6 +58,10 @@ public class ReviewView extends LinearLayout {
 
     @OnClick(R.id.text_view_url)
     public void onUrlClick() {
-        Toast.makeText(context, "I'm not openning it!!",Toast.LENGTH_SHORT).show();
+        String url = urlTextView.getText().toString();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.setData(Uri.parse(url));
+        context.startActivity(i);
     }
 }
